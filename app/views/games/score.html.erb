@@ -1,3 +1,10 @@
 <h1>Result</h1>
 <p><span class=<%= @first_class %>><%= @first_seg %></span> <span class=<%= @second_class %>><%= @second_seg %></span> <span><%= @third_seg %></span></p>
-<%= link_to "Play again", new_path %>
+<h3>Your scores</h3>
+<ul>
+  <% @results.each_with_index do |result, index| %>
+    <li>Game <%= index + 1 %> - <%= result %></li>
+  <% end %>
+</ul>
+<p><%= link_to "Play again", new_path %></p>
+<p><%= link_to "Reset game", reset_path %></p>

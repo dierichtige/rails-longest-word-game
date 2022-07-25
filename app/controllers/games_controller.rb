@@ -4,6 +4,7 @@ require "open-uri"
 class GamesController < ApplicationController
 
   def new
+    initialize_score
     @letters = []
     (1..10).each do |_num|
       random = ('A'..'Z').to_a.sample
@@ -21,7 +22,6 @@ class GamesController < ApplicationController
     found = user["found"]
     input_arr = input.upcase.split(//) # cast @input into an array (all uppercase)
     letters_arr = letters.split(" ") # cast letters into an array (all uppercase)
-    # letters_arr = ['S', 'T', 'I', 'U', 'N', 'P', 'Z', 'B', 'Q', 'N']
     i = 0
     if found
       input_arr.each do |ip|
@@ -36,22 +36,51 @@ class GamesController < ApplicationController
         @second_seg = "#{input.upcase}"
         @second_class = ""
         @third_seg = "is a valid English word!"
+        scores = get_score(i)
       else
-        # @result = "Sorry but #{input.upcase} can't be built out of #{letters.split(" ").join(", ")}"
         @first_seg = "Sorry but"
         @first_class = ""
         @second_seg = "#{input.upcase}"
         @second_class = "bold"
         @third_seg = "can't be built out of #{letters.split(" ").join(", ")}"
+        scores = 0
       end
     else
-      # @result = "Sorry but #{input.upcase} does not seem to be a valid English word..."
       @first_seg = "Sorry but"
       @first_class = ""
       @second_seg = "#{input.upcase}"
       @second_class = "bold"
       @third_seg = "does not seem to be a valid English word..."
+      scores = 0
     end
+    session[:score] << scores
+    @results = session[:score]
     # raise
+  end
+
+  def reset
+    reset_session
+    redirect_to new_path # need to reset and then redirect to re-zero score
+  end
+
+  def get_score(n)
+    if n <= 10 && n >= 7
+      scores = 10
+    elsif n == 6
+      scores = 9
+    elsif n == 5
+      scores = 8
+    elsif n == 4
+      scores = 7
+    elsif n == 3
+      scores = 6
+    else
+      scores = 2
+    end
+    return scores
+  end
+
+  def initialize_score
+    session[:score] = [] unless session[:score].present?
   end
 end
